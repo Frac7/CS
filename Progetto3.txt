@@ -1,0 +1,31 @@
+const kA = key:cSEgX8SmsFQtqjpd74tisgse3HHWeBv6drcZRQtktFzZ2ZoMBCob
+const pubkeyA = pubkey:03ac8258d87b0d1498bc4e4be96e4f1ea155b5baa56760ec539bf81213cc8f9643 
+const kB = key:cTYkj1uur33qNUL3eAkMNKw9MNSLEUCgR53vuXszbRp5xZmsNVbY
+const pubkeyB = pubkey:03ad8f865a2ff958203eb6a5963dd538de55498293c2a0237981978ac08949d94e
+const kCur = key:cTwY2CcXidzQrQG4NTQ1k9oQTJ2m2i2RJfaznqgbsacuD1cCSPL6
+const pubkeyCur = pubkey:02ca26f20e918ee36b0210f7645632cae670e43d1a181d4f1fe5d60ec10a8a9300
+
+const pubkeyC = pubkey:03c2ec45aec1e15da7dffaa70ecc321a232b62ad371454e1a2bb1ce8cfb5dfc70a
+const kC = key:cUwPUnmWYVVSqVpL3KDgusUP8gEjQN4xRy7AxLwk6AHrusaQfdgE
+
+const pubkeyCur2 = pubkey:0285e415ffadb15f09b0cbbb54cdfaf872001b85f3eb50403e9fa9ab6323f94f0b
+const kCur2 = key:cQEcJNN6dFunvKNTbM5GkVZBQuqWyustLkGFLKbev9voiFYSgcxS
+
+const deadline = 2019-06-14
+
+transaction Tinit { 
+ input = _
+ output = 1 BTC : fun(x, y, sCur:signature) . 
+    (versig(pubkeyA, pubkeyB, pubkeyC; x, y) && versig(pubkeyCur; sCur)) || versig(pubkeyCur2; sCur) 
+}
+
+transaction RedeemDefendant(s) {
+    input = Tinit : sig(kA) sig(kB) sig(kCur)
+    output = 1 BTC : fun(x) . versig(s; x)
+    absLock = date deadline
+}
+
+transaction RedeemCur {
+    input = Tinit : _ _ sig(kCur2)
+    output = 1 BTC : fun(x) . versig(pubkeyCur2; x)
+}
